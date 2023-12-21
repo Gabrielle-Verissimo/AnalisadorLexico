@@ -1,4 +1,3 @@
-from turtle import back
 from TokenType import TokenType
 from Token import Token
 class Scanner:
