@@ -18,6 +18,7 @@ class Scanner:
 
         while(True):
             if(self.isEOF()): return None
+            self.position(currentChar)
             currentChar = self.nextChar()
             match self.state:
                 case 0:
@@ -129,7 +130,12 @@ class Scanner:
                         self.back()
                         return Token(TokenType.DELIM, content, self.line)
 
-                        
+    def position(self, currentChar):
+        self.column = self.column + 1
+        if(currentChar == '\n' or currentChar == '\r'):
+            self.line = self.line + 1
+            self.coluna = 0; 
+            
     def isEOF(self):
         if self.pos >= len(self.code): 
             return True
@@ -142,11 +148,6 @@ class Scanner:
         if self.pos < len(self.code):
             result = self.code[self.pos]
             self.pos += 1
-            if result == '\n':
-                self.line += 1
-                self.column = 0
-            else:
-                self.column += 1
             return result
         else:
             return None
