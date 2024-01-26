@@ -3,6 +3,7 @@ program resultado;
         S,M : real;
             Result : boolean;
     begin
+    {isto eh um comentario}
         N1:=7.5;
         N2:=5.5;
         N3:=4.5;
