@@ -1,10 +1,12 @@
 from enum import Enum
+from tkinter.tix import INTEGER
 class TokenType(Enum):
 	IDENTIFIER = 1
-	NUMBER = 2
-	REL_OP = 3
-	ADD_OP = 4
-	MULT_OP = 5
-	DELIM = 6
-	ASSIGN = 7
-	WORD_RESERVED = 8
+	INTEGER = 2
+	REAL = 3
+	REL_OP = 4
+	ADD_OP = 5
+	MULT_OP = 6
+	DELIM = 7
+	ASSIGN = 8
+	WORD_RESERVED = 9

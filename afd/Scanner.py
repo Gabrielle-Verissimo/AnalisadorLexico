@@ -83,10 +83,10 @@ class Scanner:
                         content = content + currentChar
                         self.state = 5
                     elif(self.isLetter(currentChar)):
-                        raise Exception("Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
+                        raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
-                        return Token(TokenType.NUMBER, content, self.line)
+                        return Token(TokenType.INTEGER, content, self.line)
                 case 3:
                     if(self.isEqual(currentChar)):
                         content = content + currentChar
@@ -109,10 +109,10 @@ class Scanner:
                         content = content + currentChar
                         self.state = 5
                     elif(self.isLetter(currentChar)):
-                        raise Exception("Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
+                        raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
-                        return Token(TokenType.NUMBER, content, self.line)
+                        return Token(TokenType.REAL, content, self.line)
                 case 6:
                     if(currentChar == '\n' or currentChar == '\r'):
                         self.state = 0
