@@ -1,3 +1,4 @@
+from ctypes.wintypes import BOOLEAN
 from enum import Enum
 from tkinter.tix import INTEGER
 class TokenType(Enum):
@@ -9,4 +10,5 @@ class TokenType(Enum):
 	MULT_OP = 6
 	DELIM = 7
 	ASSIGN = 8
-	WORD_RESERVED = 9
+	BOOLEAN = 9
+	WORD_RESERVED = 10

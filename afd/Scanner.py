@@ -74,6 +74,10 @@ class Scanner:
                             return Token(TokenType.ADD_OP, content, self.line)
                         elif(content == "and"):
                             return Token(TokenType.MULT_OP_OP, content, self.line)
+                        elif(content == "True"):
+                            return Token(TokenType.BOOLEAN, content, self.line)
+                        elif(content == "False"):
+                            return Token(TokenType.BOOLEAN, content, self.line)
                         return Token(TokenType.IDENTIFIER, content, self.line)
                 case 2:
                     if(self.isDigit(currentChar)):
