@@ -20,6 +20,17 @@ class Parser:
                     self.dcl_var()
                     self.dcls_sub()
                     self.command_com()
+                    self.token = self.scanner.nextToken()
+                    if(self.token.getContent() == '.'):
+                        return
+                    else:
+                        raise Exception(f"Erro sintatico: Espera-se o delimitador '.' e foi recebido '{self.token.getContent()}' na linha {self.line} e coluna {self.column}")
+                else:
+                    raise Exception(f"Erro sintatico: Espera-se o delimitador ';' e foi recebido '{self.token.getContent()}' na linha {self.line} e coluna {self.column}")
+            else:
+                raise Exception(f"Erro sintatico: Espera-se um identificador e foi recebido '{self.token.getType()}' na linha {self.line} e coluna {self.column}")
+        else:
+            raise Exception(f"Erro sintatico: Espera-se 'program' e foi recebido '{self.token.getContent()}' na linha {self.line} e coluna {self.column}")
                     
     def dcl_var(self):
         self.token = self.scanner.nextToken()
@@ -27,11 +38,7 @@ class Parser:
             self.list_dcl_var()
         else:
             return
-    
-    def dcls_sub(self):
         
-    def command_com(self):
-    
     def list_dcl_var(self):
         self.list_id()
         self.token = self.scanner.nextToken()
@@ -53,18 +60,68 @@ class Parser:
             self.token = self.scanner.nextToken()
             if self.token.getContent() == ';':
                 self.list_dcl_var_l()
+                
+# lista_de_identificadores → id lista_de_identificadores_resto
+# lista_de_identificadores_resto → , id lista_de_identificadores_resto | ε
+
 
     def list_id(self):
         self.token = self.scanner.nextToken()
-        if(self.token == ':'):
+        if(self.token.getType() == TokenType.IDENTIFIER):
+            self.list_id_l()
             self.type()
+    
+    def list_id_l(self):
             
     def type(self):
         self.token = self.scanner.nextToken()
-        if(self.token.getType() == TokenType.INTEGER or self.token.getType() == TokenType.REAL):
+        if(self.token.getType() == TokenType.INTEGER or self.token.getType() == TokenType.REAL or self.token.getType() == TokenType.BOOLEAN):
             self.token = self.scanner.nextToken()
             if(self.token.getType() == ';'):
                 return
+# declarações_de_subprogramas → declaração_de_subprograma; declarações_de_subprogramas | ε
+# lista_de_comandos → comando lista_de_comandos; | comando
+# lista_de_expressões → expressão, lista_de_expressões | expressão
+# expressão_simples → termo op_aditivo expressão_simples | sinal termo | termo
+# termo → fator op_multiplicativo termo | fator  
+    def dcls_sub(self):
+        self.dcl_subprogram()
+        self.token = self.scanner.nextToken()
+        if self.token.getContent() == ';':
+            self.dcls_sub()
+        else:
+            return
+        
+    def dcl_subprogram(self):
+        self.token = self.scanner.nextToken()
+        if(self.token.getContent() == 'procedure'):
+            self.token = self.scanner.nextToken()
+            if(self.token.getType() == TokenType.IDENTIFIER):
+                self.arguments()
+                self.token = self.scanner.nextToken()
+                if(self.token.getContent() == ';'):
+                    self.dcl_var()
+                    self.dcls_sub()
+                    self.command_com()
+        else:
+            return
+                    
+    def arguments(self):
+        self.token = self.scanner.nextToken()
+        if self.token.getContent() == '(':
+            self.list_param()
+            self.token = self.scanner.nextToken()
+            if self.token.getContent() == ')':
+                return
+            else:
+                raise Exception(f"Unexpected token: {self.token.getContent()}")
+        else:
+            return
+    def list_param(self):
+        self.list_id()
+        
+    def command_com(self):
+    
 
     #     if self.token.getType() == TokenType.IDENTIFIER or self.token.getType() == TokenType.NUMBER:
     #         self.token = self.scanner.nextToken()
@@ -87,5 +144,3 @@ class Parser:
     #         return
 
 
-#1. LISTA_DECLARACOES_VARIAVEIS -> LISTA_DE_IDENTIFICADORES : TIPO ; LISTA_DECLARACOES_VARIAVEIS_RESTO
-#2. LISTA_DECLARACOES_VARIAVEIS_RESTO -> LISTA_DE_IDENTIFICADORES : TIPO ; LISTA_DECLARACOES_VARIAVEIS_RESTO | ε
