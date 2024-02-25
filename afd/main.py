@@ -2,7 +2,7 @@ from Scanner import Scanner
 from Token import Token
 from Parser import Parser
 
-sc = Scanner('rascunho.txt')
+sc = Scanner('code.txt')
 token = Token
 parser = Parser(sc)
 
