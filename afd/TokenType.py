@@ -1,6 +1,4 @@
-from ctypes.wintypes import BOOLEAN
 from enum import Enum
-from tkinter.tix import INTEGER
 class TokenType(Enum):
 	IDENTIFIER = 1
 	INTEGER = 2

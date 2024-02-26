@@ -30,10 +30,10 @@ class Scanner:
                         self.state = 1
                     elif(self.isDelim(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.DELIM, content, self.line)
+                        return Token(TokenType.DELIM, content, self.line, self.column)
                     elif(self.isPoint(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.DELIM, currentChar, self.line)
+                        return Token(TokenType.DELIM, currentChar, self.line, self.column)
                     elif(self.isTwoPoint(currentChar)):
                         content = content + currentChar
                         self.state = 8
@@ -42,13 +42,13 @@ class Scanner:
                         self.state = 2
                     elif(self.isAddOp(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.ADD_OP, content, self.line)
+                        return Token(TokenType.ADD_OP, content, self.line, self.column)
                     elif(self.isMultOp(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.MULT_OP, content, self.line)
+                        return Token(TokenType.MULT_OP, content, self.line, self.column)
                     elif(self.isEqual(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.REL_OP, content, self.line)
+                        return Token(TokenType.REL_OP, content, self.line, self.column)
                     elif(self.isGreater(currentChar)):
                         content = content + currentChar
                         self.state = 4
@@ -57,7 +57,7 @@ class Scanner:
                         self.state = 4
                     elif(self.isParentheses(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.DELIM, content, self.line)
+                        return Token(TokenType.DELIM, content, self.line, self.column)
                     elif(self.isOpenComment(currentChar)):
                         self.state = 7
                     elif(self.isSpace(currentChar)):
@@ -69,16 +69,16 @@ class Scanner:
                     else:
                         self.back()
                         if(self.isReserved(content)):
-                            return Token(TokenType.WORD_RESERVED, content, self.line)
+                            return Token(TokenType.WORD_RESERVED, content, self.line, self.column)
                         elif(content == "or"):
-                            return Token(TokenType.ADD_OP, content, self.line)
+                            return Token(TokenType.ADD_OP, content, self.line, self.column)
                         elif(content == "and"):
-                            return Token(TokenType.MULT_OP_OP, content, self.line)
+                            return Token(TokenType.MULT_OP_OP, content, self.line, self.column)
                         elif(content == "True"):
-                            return Token(TokenType.BOOLEAN, content, self.line)
+                            return Token(TokenType.BOOLEAN, content, self.line, self.column)
                         elif(content == "False"):
-                            return Token(TokenType.BOOLEAN, content, self.line)
-                        return Token(TokenType.IDENTIFIER, content, self.line)
+                            return Token(TokenType.BOOLEAN, content, self.line, self.column)
+                        return Token(TokenType.IDENTIFIER, content, self.line, self.column)
                 case 2:
                     if(self.isDigit(currentChar)):
                         content = content + currentChar
@@ -90,24 +90,24 @@ class Scanner:
                         raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
-                        return Token(TokenType.INTEGER, content, self.line)
+                        return Token(TokenType.INTEGER, content, self.line, self.column)
                 case 3:
                     if(self.isEqual(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.REL_OP, content, self.line)
+                        return Token(TokenType.REL_OP, content, self.line, self.column)
                     else:
                         self.back()
-                        return Token(TokenType.ASSIGN, content, self.line)
+                        return Token(TokenType.ASSIGN, content, self.line, self.column)
                 case 4:
                     if(self.isEqual(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.REL_OP, content, self.line)
+                        return Token(TokenType.REL_OP, content, self.line, self.column)
                     elif(content == "<" and self.isGreater(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.REL_OP, content, self.line)
+                        return Token(TokenType.REL_OP, content, self.line, self.column)
                     else:
                         self.back()
-                        return Token(TokenType.REL_OP, content, self.line)
+                        return Token(TokenType.REL_OP, content, self.line, self.column)
                 case 5:
                     if(self.isDigit(currentChar)):
                         content = content + currentChar
@@ -116,7 +116,7 @@ class Scanner:
                         raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
-                        return Token(TokenType.REAL, content, self.line)
+                        return Token(TokenType.REAL, content, self.line, self.column)
                 case 6:
                     if(currentChar == '\n' or currentChar == '\r'):
                         self.state = 0
@@ -129,10 +129,10 @@ class Scanner:
                 case 8:
                     if(self.isEqual(currentChar)):
                         content = content + currentChar
-                        return Token(TokenType.ASSIGN, content, self.line)
+                        return Token(TokenType.ASSIGN, content, self.line, self.column)
                     else:
                         self.back()
-                        return Token(TokenType.DELIM, content, self.line)
+                        return Token(TokenType.DELIM, content, self.line, self.column)
 
     def position(self, currentChar):
         self.column = self.column + 1

@@ -7,11 +7,8 @@ token = Token
 parser = Parser(sc)
 
 try:
-    while(token != None):
-        token = parser.syntax()
-        if(token == None): break
-        #print(token)
-    print("sucesso")
+    parser.syntax()
+    print("Compilation Successful!")
 except Exception as e:
     print(f"Erro: {e}")
     raise
