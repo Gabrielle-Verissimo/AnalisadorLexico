@@ -16,6 +16,12 @@ class Token:
     
     def setContent(self, content):
         self.content = content
+        
+    def getLine(self):
+        return self.line
+    
+    def getColumn(self):
+        return self.column
 
     def __str__(self):
         return f"Token [type = {self.type}, content = {self.content}, line = {self.line}, column = {self.column}]"

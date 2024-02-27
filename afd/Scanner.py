@@ -139,7 +139,7 @@ class Scanner:
         if(currentChar == '\n' or currentChar == '\r'):
             self.line = self.line + 1
             self.column = 0; 
-            
+           
     def isEOF(self):
         if self.pos >= len(self.code): 
             return True
