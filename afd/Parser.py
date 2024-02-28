@@ -57,6 +57,7 @@ class Parser:
         if(self.token.getContent() == 'var'):
             self.list_dcl_var()
         else:
+            self.back()
             return
 # list_dcl_var -> lista_de_identificadores:tipo;list_dcl_var_l
 # list_dcl_var_l -> lista_de_identificadores:tipo;list_dcl_var_l|vazio
@@ -71,14 +72,17 @@ class Parser:
                 return
 
     def list_dcl_var_l(self):
-        self.list_id()
-        self.read_token()             
-        if self.token.getContent() == ':':
-            self.type()
-            self.read_token()
-            if self.token.getContent() == ';':
-                self.list_dcl_var_l()
-                return
+        self.read_token()
+        if(self.token.getType() == TokenType.IDENTIFIER):
+            self.back()
+            self.list_id()
+            self.read_token()             
+            if self.token.getContent() == ':':
+                self.type()
+                self.read_token()
+                if self.token.getContent() == ';':
+                    self.list_dcl_var_l()
+                    return
         else:
             self.back()
             return
@@ -90,8 +94,8 @@ class Parser:
             self.list_id_l()
             return
         else:
-            self.back()
-            return
+            raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+            
     def list_id_l(self):
         self.read_token()        
         if(self.token.getContent() == ','):
@@ -99,7 +103,7 @@ class Parser:
             if(self.token.getType() == TokenType.IDENTIFIER):
                 self.list_id_l()
             else:
-                raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")                
+                raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
         else:
             self.back()            
             return
