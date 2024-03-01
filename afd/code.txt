@@ -9,7 +9,7 @@ program resultado;
         N3:=4.5;
         S:=N1+N2+N3;
         M:=S/3;
-        if(M>=5)Then
+        if(M>=5)then
             Result:=True
         else
             Result:=False;

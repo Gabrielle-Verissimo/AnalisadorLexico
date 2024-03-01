@@ -15,8 +15,8 @@ class Parser:
         t = Token
         while(t != None):
             t = self.scanner.nextToken()
-            self.buffer.append(t)
             if(t == None): break
+            self.buffer.append(t)
     
     def read_token(self):
         if self.next < len(self.buffer):
@@ -29,7 +29,11 @@ class Parser:
     def back(self):
         self.next -= 1
         
-    def syntax(self):
+    # def print_buffer(self):
+    #     for i in range(len(self.buffer)):
+            
+            
+    def syntax(self):    
         self.read_token()
         if(self.token == None): return
         if self.token.getContent() == 'program':
@@ -94,7 +98,7 @@ class Parser:
             self.list_id_l()
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+            raise Exception(f"Erro sintatico: Espera-se uma variavel1 e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
             
     def list_id_l(self):
         self.read_token()        
@@ -103,7 +107,7 @@ class Parser:
             if(self.token.getType() == TokenType.IDENTIFIER):
                 self.list_id_l()
             else:
-                raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+                raise Exception(f"Erro sintatico: Espera-se uma variavel2 e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
         else:
             self.back()            
             return
@@ -177,10 +181,10 @@ class Parser:
      
     def list_param_l(self):
         self.read_token()
-        if self.token.getContent == ';':
+        if self.token.getContent() == ';':
             self.list_id()
             self.read_token()
-            if self.token.getContent == ':':
+            if self.token.getContent() == ':':
                 self.type()
                 self.list_param_l()
         else:
@@ -200,18 +204,28 @@ class Parser:
             raise Exception(f"Erro sintatico: Espera-se 'begin' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             
     def optional_command(self):
-        self.list_command()
-        return
+            
+        if self.next < len(self.buffer) - 2:
+            self.list_command()
+            return
+        else:
+            
+            self.back()
+            return
     
 #lista_de_comandos → comando lista_de_comandos'
 #lista_de_comandos' → ; comando lista_de_comandos' | ε
     def list_command(self):
+        
+        
         self.command()
         self.list_command_l()
+        return
 
     def list_command_l(self):
+        
         self.read_token()
-        if self.token.getContent == ';':
+        if self.token.getContent() == ';':
             self.command()
             self.list_command_l()
         else:
@@ -219,48 +233,56 @@ class Parser:
             return
     
     def command(self):
+        
         self.read_token()
+        
         if self.token.getType() == TokenType.IDENTIFIER:
+            
+            self.procedure_activation()
             self.read_token()
             if self.token.getType() == TokenType.ASSIGN:                
                 self.expression()
+                return
             else:
                 raise Exception(f"Erro sintatico: Espera-se o sinal de atribuição ':=' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-        else:
-            self.procedure_activation()
-            self.command_com()
-            self.read_token()
-            if self.token.getContent() == 'if':
+        elif self.token.getContent() == 'if':
                 self.expression()
                 self.read_token()
                 if self.token.getContent() == 'then':
                     self.command()
                     self.part_else()
-            elif self.token.getContent() == 'while':
+        elif self.token.getContent() == 'while':
                 self.expression()
                 self.read_token()
                 if self.token.getContent() == 'do':
                     self.command()
-            else:
-                raise Exception(f"Erro sintatico: Espera-se um 'if' ou um 'while' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+        else:
+            #self.back()
+            self.command_com()
+            return
         
     def part_else(self):
+        
         self.read_token()
-        if self.token.getContent == 'else':
+        if self.token.getContent() == 'else':
             self.command()
+            return
         else:
             self.back()
             return
     
     def variable(self):
+        
         self.read_token()
         if self.token.getType() == TokenType.IDENTIFIER:
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: Espera-se uma variavel3 e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
         
     def procedure_activation(self):
-        self.read_token()
+        
+        #self.read_token()
+        
         if self.token.getType() == TokenType.IDENTIFIER:
             self.read_token()
             if self.token.getContent() == '(':
@@ -271,16 +293,15 @@ class Parser:
             else:
                 self.back()
                 return
-        else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-
 #lista_de_expressões → expressão lista_de_expressões'
 #lista_de_expressões' → , expressão lista_de_expressões' | ε           
     def list_expression(self):
+        
         self.expression()
         self.list_expression_l()
     
     def list_expression_l(self):
+        
         self.read_token()
         if self.token.getContent() == ',':
             self.expression()
@@ -290,10 +311,14 @@ class Parser:
             return       
     
     def expression(self):
+        
+        
         self.simple_expression()
         self.read_token()
         if self.token.getType() == TokenType.REL_OP:
+            #
             self.simple_expression()
+            return
         else:
             self.back()
             return
@@ -301,6 +326,8 @@ class Parser:
 #expressão_simples → termo expressão_simples' | sinal termo expressão_simples'
 #expressão_simples' → op_aditivo termo expressão_simples' | ε
     def simple_expression(self):
+        
+        
         self.term()
         self.simple_expression_l()  
         self.read_token()
@@ -309,10 +336,13 @@ class Parser:
             self.simple_expression_l()
         else:
             self.back()
+            return
     
     def simple_expression_l(self):
-        self.simple_expression_l()  
+        
+        
         self.read_token()
+        
         if self.token.getType() == TokenType.ADD_OP:
             self.term()
             self.simple_expression_l()
@@ -320,18 +350,31 @@ class Parser:
             self.back()
             return
         
+#termo → fator termo'
+#termo' → op_multiplicativo fator termo' | ε
     def term(self):
+        
+        
         self.factor()
-        self.term()
+        self.term_l()
+        return
+    
+    def term_l(self):
+        
         self.read_token()
         if self.token.getType() == TokenType.MULT_OP:
             self.factor()
+            self.term_l()
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se um operador multiplicativo e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-         
+            self.back()
+            return
+
     def factor(self):
         self.read_token()
+        
+        
+        
         if self.token.getType() == TokenType.IDENTIFIER:
             self.read_token()
             if self.token.getContent() == '(':
@@ -339,15 +382,23 @@ class Parser:
                 self.read_token()
                 if self.token.getContent() == ')':
                     return
+                else:
+                    raise SyntaxError("Expected closing parenthesis")
             else:
                 self.back()
                 return
-        elif self.token.getType() == TokenType.INTEGER or self.token.getType() == TokenType.REAL or self.token.getType() == TokenType.BOOLEAN:
+        elif self.token.getType() in (TokenType.INTEGER, TokenType.REAL, TokenType.BOOLEAN):
+            
             return
-        elif self.token.getContent() == '(': 
+        elif self.token.getContent() == '(':
             self.expression()
             self.read_token()
             if self.token.getContent() == ')':
                 return
+            else:
+                raise SyntaxError("Expected closing parenthesis")
         elif self.token.getContent() == 'not':
             self.factor()
+            return
+        else:
+            raise SyntaxError (f"Erro sintatico: Unexpected token '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
