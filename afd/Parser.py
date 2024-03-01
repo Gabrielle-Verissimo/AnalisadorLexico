@@ -60,6 +60,7 @@ class Parser:
         self.read_token()        
         if(self.token.getContent() == 'var'):
             self.list_dcl_var()
+            return
         else:
             self.back()
             return
@@ -106,6 +107,7 @@ class Parser:
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
                 self.list_id_l()
+                return
             else:
                 raise Exception(f"Erro sintatico: Espera-se uma variavel2 e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
         else:
@@ -204,14 +206,15 @@ class Parser:
             raise Exception(f"Erro sintatico: Espera-se 'begin' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             
     def optional_command(self):
+        self.list_command()
+        return
             
-        if self.next < len(self.buffer) - 2:
-            self.list_command()
-            return
-        else:
-            
-            self.back()
-            return
+        # if self.next < len(self.buffer) - 2:
+        #     self.list_command()
+        #     return
+        # else:
+        #     self.back()
+        #     return
     
 #lista_de_comandos → comando lista_de_comandos'
 #lista_de_comandos' → ; comando lista_de_comandos' | ε
@@ -223,8 +226,8 @@ class Parser:
         return
 
     def list_command_l(self):
-        
         self.read_token()
+        
         if self.token.getContent() == ';':
             self.command()
             self.list_command_l()
@@ -257,8 +260,8 @@ class Parser:
                 if self.token.getContent() == 'do':
                     self.command()
         else:
-            #self.back()
-            self.command_com()
+            #self.command_com()
+            self.back()
             return
         
     def part_else(self):
