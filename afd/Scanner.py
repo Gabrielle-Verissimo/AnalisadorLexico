@@ -73,7 +73,7 @@ class Scanner:
                         elif(content == "or"):
                             return Token(TokenType.ADD_OP, content, self.line, self.column)
                         elif(content == "and"):
-                            return Token(TokenType.MULT_OP_OP, content, self.line, self.column)
+                            return Token(TokenType.MULT_OP, content, self.line, self.column)
                         elif(content == "True"):
                             return Token(TokenType.BOOLEAN, content, self.line, self.column)
                         elif(content == "False"):

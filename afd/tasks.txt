@@ -1,0 +1,3 @@
+testar procedure_activation sem o primeiro if caso passe em todos os testes com
+testar o funcionamento de SyntaxError no lugar do exception
+melhorar as mensagens de erro 

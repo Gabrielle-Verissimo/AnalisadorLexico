@@ -29,10 +29,6 @@ class Parser:
     def back(self):
         self.next -= 1
         
-    # def print_buffer(self):
-    #     for i in range(len(self.buffer)):
-            
-            
     def syntax(self):    
         self.read_token()
         if(self.token == None): return
@@ -206,21 +202,18 @@ class Parser:
             raise Exception(f"Erro sintatico: Espera-se 'begin' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             
     def optional_command(self):
-        self.list_command()
-        return
-            
-        # if self.next < len(self.buffer) - 2:
-        #     self.list_command()
-        #     return
-        # else:
-        #     self.back()
-        #     return
+        self.read_token()
+        if self.token != 'end':
+            self.back()
+            self.list_command()
+            return
+        else:
+            self.back()
+            return
     
 #lista_de_comandos → comando lista_de_comandos'
 #lista_de_comandos' → ; comando lista_de_comandos' | ε
     def list_command(self):
-        
-        
         self.command()
         self.list_command_l()
         return
@@ -235,12 +228,9 @@ class Parser:
             self.back()
             return
     
-    def command(self):
-        
-        self.read_token()
-        
+    def command(self):     
+        self.read_token()     
         if self.token.getType() == TokenType.IDENTIFIER:
-            
             self.procedure_activation()
             self.read_token()
             if self.token.getType() == TokenType.ASSIGN:                
@@ -259,8 +249,12 @@ class Parser:
                 self.read_token()
                 if self.token.getContent() == 'do':
                     self.command()
+                    return
+        elif self.token.getContent() == 'begin':
+            self.back()
+            self.command_com()
+            return
         else:
-            #self.command_com()
             self.back()
             return
         
@@ -282,10 +276,7 @@ class Parser:
         else:
             raise Exception(f"Erro sintatico: Espera-se uma variavel3 e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
         
-    def procedure_activation(self):
-        
-        #self.read_token()
-        
+    def procedure_activation(self):        
         if self.token.getType() == TokenType.IDENTIFIER:
             self.read_token()
             if self.token.getContent() == '(':
@@ -313,9 +304,7 @@ class Parser:
             self.back()
             return       
     
-    def expression(self):
-        
-        
+    def expression(self):     
         self.simple_expression()
         self.read_token()
         if self.token.getType() == TokenType.REL_OP:
@@ -328,9 +317,7 @@ class Parser:
 
 #expressão_simples → termo expressão_simples' | sinal termo expressão_simples'
 #expressão_simples' → op_aditivo termo expressão_simples' | ε
-    def simple_expression(self):
-        
-        
+    def simple_expression(self):  
         self.term()
         self.simple_expression_l()  
         self.read_token()
@@ -341,9 +328,7 @@ class Parser:
             self.back()
             return
     
-    def simple_expression_l(self):
-        
-        
+    def simple_expression_l(self): 
         self.read_token()
         
         if self.token.getType() == TokenType.ADD_OP:
@@ -355,15 +340,12 @@ class Parser:
         
 #termo → fator termo'
 #termo' → op_multiplicativo fator termo' | ε
-    def term(self):
-        
-        
+    def term(self):  
         self.factor()
         self.term_l()
         return
     
     def term_l(self):
-        
         self.read_token()
         if self.token.getType() == TokenType.MULT_OP:
             self.factor()
@@ -375,9 +357,6 @@ class Parser:
 
     def factor(self):
         self.read_token()
-        
-        
-        
         if self.token.getType() == TokenType.IDENTIFIER:
             self.read_token()
             if self.token.getContent() == '(':
@@ -391,7 +370,6 @@ class Parser:
                 self.back()
                 return
         elif self.token.getType() in (TokenType.INTEGER, TokenType.REAL, TokenType.BOOLEAN):
-            
             return
         elif self.token.getContent() == '(':
             self.expression()
