@@ -22,7 +22,7 @@ patterns = [
 token_regex = '|'.join('(?P<%s>%s)' % pair for pair in patterns)
 lexer = re.compile(token_regex)
 
-with open('code.txt', 'r') as file:
+with open('regex/code.txt', 'r') as file:
     input_file = file.read()
 
 # Tokenizacao (separacao dos tokens) do string de entrada
