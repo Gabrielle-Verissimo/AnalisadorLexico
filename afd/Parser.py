@@ -44,13 +44,13 @@ class Parser:
                     if(self.token.getContent() == '.'):
                         return
                     else:
-                        raise Exception(f"Erro sintatico: Espera-se o delimitador '.' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                        raise Exception(f"Erro sintatico: Esperava-se o final do programa com um '.', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}. Certifique-se de que o programa esta corretamente finalizado.")
                 else:
-                    raise Exception(f"Erro sintatico1: Espera-se o delimitador ';' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                    raise Exception(f"Erro sintatico: Esperava-se um ';' apos a declaracao de variavel, mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}. Insira o delimitador corretamente.")
             else:
-                raise Exception(f"Erro sintatico: Espera-se um identificador e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                raise Exception(f"Erro sintatico: Apos 'program', esperava-se um identificador, mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
         else:
-            raise Exception(f"Erro sintatico: Espera-se 'program' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: O arquivo deve começar com a palavra 'program', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
                     
     def dcl_var(self):
         self.read_token()        
@@ -95,7 +95,7 @@ class Parser:
             self.list_id_l()
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel1 e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+            raise Exception(f"Erro sintatico: Espera-se uma variavel1, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
             
     def list_id_l(self):
         self.read_token()        
@@ -105,7 +105,7 @@ class Parser:
                 self.list_id_l()
                 return
             else:
-                raise Exception(f"Erro sintatico: Espera-se uma variavel2 e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+                raise Exception(f"Erro sintatico: Espera-se uma variavel2, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
         else:
             self.back()            
             return
@@ -115,7 +115,7 @@ class Parser:
         if(self.token.getContent() == 'integer' or self.token.getContent() == 'real' or self.token.getContent() == 'boolean'):
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se um tipo inteiro, real ou booleando e foi recebido '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: Tipo de dado invalido. Esperava-se 'integer', 'real' ou 'boolean', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
 
 #declarações_de_subprogramas → declaração_de_subprograma; declarações_de_subprogramas'
 #declarações_de_subprogramas' → declaração_de_subprograma; declarações_de_subprogramas' | ε
@@ -149,7 +149,7 @@ class Parser:
                     self.dcls_sub()
                     self.command_com()
                 else:
-                    raise Exception(f"Erro sintatico3: Espera-se o delimitador ';' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")    
+                    raise Exception(f"Erro sintatico: Apos uma declaracao de subprograma, esperava-se ';', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
         else:
             self.back()
             return
@@ -162,7 +162,7 @@ class Parser:
             if self.token.getContent() == ')':
                 return
             else:
-                raise Exception(f"Erro sintatico: espera-se o delimitador ')' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                raise Exception(f"Erro sintatico: Apos a lista de argumentos, esperava-se ')', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
         else:
             self.back()
             return
@@ -175,7 +175,7 @@ class Parser:
             self.type()
             self.list_param_l()
         else:
-            raise Exception(f"Erro sintatico: espera-se o delimitador ':' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: esperava-se o delimitador ':', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}. O delimitador é necessário para especificar o tipo da variável na declaração.")
      
     def list_param_l(self):
         self.read_token()
@@ -197,9 +197,9 @@ class Parser:
             if self.token.getContent() == 'end':
                 return
             else:
-                raise Exception(f"Erro sintatico: Espera-se 'end' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                raise Exception(f"Erro sintatico: Esperava-se 'end' para finalizar um bloco 'begin', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
         else:
-            raise Exception(f"Erro sintatico: Espera-se 'begin' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: Esperava-se 'begin' para iniciar um bloco, mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             
     def optional_command(self):
         self.read_token()
@@ -237,7 +237,7 @@ class Parser:
                 self.expression()
                 return
             else:
-                raise Exception(f"Erro sintatico: Espera-se o sinal de atribuição ':=' e foi recebido '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                raise Exception(f"Erro sintatico: Esperava-se o sinal de atribuição ':=', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}. Certifique-se de que está usando ':=' para atribuir valores.")
         elif self.token.getContent() == 'if':
                 self.expression()
                 self.read_token()
@@ -274,7 +274,7 @@ class Parser:
         if self.token.getType() == TokenType.IDENTIFIER:
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel3 e foi recebido '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: Espera-se uma variavel3. mas foi encontrado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
         
     def procedure_activation(self):        
         if self.token.getType() == TokenType.IDENTIFIER:
