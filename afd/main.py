@@ -1,7 +1,7 @@
 from Scanner import Scanner
 from Parser import Parser
 
-sc = Scanner('Test3.pas')
+sc = Scanner('code.txt')
 parser = Parser(sc)
 
 try:

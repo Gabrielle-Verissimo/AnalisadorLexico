@@ -22,7 +22,7 @@ patterns = [
 token_regex = '|'.join('(?P<%s>%s)' % pair for pair in patterns)
 lexer = re.compile(token_regex)
 
-with open('regex/code.txt', 'r') as file:
+with open('code.txt', 'r') as file:
     input_file = file.read()
 
 # Tokenizacao (separacao dos tokens) do string de entrada
@@ -36,12 +36,10 @@ for match in lexer.finditer(input_file):
         token = match.group(name)
         if token == '{' and is_comment == False:
             qtd_tokens = qtd_tokens + 1
-            #qtd_tokens = match.end()
             is_comment = True
             break
         if token == '}' and is_comment:
             qtd_tokens = qtd_tokens + 1
-            #qtd_tokens = match.end()
             is_comment = False
             break
         if token == '\n' or token == '\r':
