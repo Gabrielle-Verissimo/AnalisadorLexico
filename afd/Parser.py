@@ -95,7 +95,7 @@ class Parser:
             self.list_id_l()
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel1, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+            raise Exception(f"Erro sintatico: Espera-se uma variavel, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
             
     def list_id_l(self):
         self.read_token()        
@@ -105,7 +105,7 @@ class Parser:
                 self.list_id_l()
                 return
             else:
-                raise Exception(f"Erro sintatico: Espera-se uma variavel2, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
+                raise Exception(f"Erro sintatico: Espera-se uma variavel, mas foi encontrado '{self.token.getContent()}' do tipo '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")               
         else:
             self.back()            
             return
@@ -274,7 +274,7 @@ class Parser:
         if self.token.getType() == TokenType.IDENTIFIER:
             return
         else:
-            raise Exception(f"Erro sintatico: Espera-se uma variavel3. mas foi encontrado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception(f"Erro sintatico: Espera-se uma variavel, mas foi encontrado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
         
     def procedure_activation(self):        
         if self.token.getType() == TokenType.IDENTIFIER:
@@ -377,9 +377,9 @@ class Parser:
             if self.token.getContent() == ')':
                 return
             else:
-                raise SyntaxError("Expected closing parenthesis")
+                raise Exception(f"Erro sintatico: Esperava-se o fechamento de parenteses ')', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}")
         elif self.token.getContent() == 'not':
             self.factor()
             return
         else:
-            raise SyntaxError (f"Erro sintatico: Unexpected token '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception (f"Erro sintatico: Token inesperado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
