@@ -99,9 +99,6 @@ class Scanner:
                     elif(self.isPoint(currentChar)):
                         content = content + currentChar
                         self.state = 5
-                    elif(self.isLetter(currentChar)):
-                        self.column += 1
-                        raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
                         self.column += 1
@@ -132,9 +129,6 @@ class Scanner:
                     if(self.isDigit(currentChar)):
                         content = content + currentChar
                         self.state = 5
-                    elif(self.isLetter(currentChar)):
-                        self.column += 1
-                        raise Exception("Erro lexico: Numero malformado. Linha " + str(self.line) + ", coluna " + str(self.column))
                     else:
                         self.back()
                         self.column += 1
