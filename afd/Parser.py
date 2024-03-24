@@ -1,7 +1,7 @@
 from Scanner import Scanner
 from Token import Token
 from TokenType import TokenType
-
+from Stack import Stack
 class Parser:
     scanner = Scanner
     buffer = []
@@ -9,8 +9,9 @@ class Parser:
         self.scanner = scanner
         self.token = Token
         self.next = 0
+        self.stack = Stack()
         self.store_tokens()
-        
+    
     def store_tokens(self):
         t = Token
         while(t != None):
@@ -33,10 +34,13 @@ class Parser:
         self.read_token()
         if(self.token == None): return
         if self.token.getContent() == 'program':
+            self.stack.push('init_block', '$')
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
+                self.stack.push('function_name', self.token.getContent())
+                print(self.stack.top())
                 self.read_token()
-                if(self.token.getContent() == ';'):                    
+                if(self.token.getContent() == ';'):
                     self.dcl_var()
                     self.dcls_sub()
                     self.command_com()
@@ -92,6 +96,7 @@ class Parser:
     def list_id(self):
         self.read_token()
         if(self.token.getType() == TokenType.IDENTIFIER):
+            self.stack.push(self.token.getType(), self.token.getContent())
             self.list_id_l()
             return
         else:
@@ -102,6 +107,7 @@ class Parser:
         if(self.token.getContent() == ','):
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
+                self.stack.push(self.token.getType(), self.token.getContent())
                 self.list_id_l()
                 return
             else:
@@ -142,6 +148,7 @@ class Parser:
         if(self.token.getContent() == 'procedure'):
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
+                self.stack.push('init_function', self.token.getContent())
                 self.arguments()
                 self.read_token()
                 if(self.token.getContent() == ';'):

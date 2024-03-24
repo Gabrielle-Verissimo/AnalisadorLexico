@@ -1,11 +1,11 @@
 program resultado;
-    var N1,N2,N3 : real;
-        S,M : real;
+    var N1,N2,N3, N3 : real;
+        S,M, N3 : real;
             Result : boolean;
     begin
     {isto eh um comentario}
         N1:=(4*12) + (10/2);
-        N2:=5.5;
+        N2:= 5.5;
         N3:=4.5;
         S:=N1+N2+N3;
         M:=S/3;
