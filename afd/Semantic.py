@@ -10,4 +10,4 @@ class Semantic:
     
     def semantic(self):
         self.parser.syntax()
-        self.parser.stack.allElements()
+        #self.parser.stack.allElements()

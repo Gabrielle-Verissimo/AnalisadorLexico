@@ -37,8 +37,7 @@ class Parser:
             self.stack.push('init_block', '$')
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
-                self.stack.push('function_name', self.token.getContent())
-                print(self.stack.top())
+                self.stack.push('program_name', self.token.getContent())
                 self.read_token()
                 if(self.token.getContent() == ';'):
                     self.dcl_var()
@@ -96,6 +95,8 @@ class Parser:
     def list_id(self):
         self.read_token()
         if(self.token.getType() == TokenType.IDENTIFIER):
+            if(self.stack.existId(self.token.getContent())):
+                raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             self.stack.push(self.token.getType(), self.token.getContent())
             self.list_id_l()
             return
@@ -107,6 +108,8 @@ class Parser:
         if(self.token.getContent() == ','):
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
+                if(self.stack.existId(self.token.getContent())):
+                    raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
                 self.stack.push(self.token.getType(), self.token.getContent())
                 self.list_id_l()
                 return
@@ -148,7 +151,10 @@ class Parser:
         if(self.token.getContent() == 'procedure'):
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
-                self.stack.push('init_function', self.token.getContent())
+                if(self.stack.existId(self.token.getContent())):
+                    raise Exception(f"Erro semântico: Já existe uma procedure com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                self.stack.push('procedure_name', self.token.getContent())
+                self.stack.push('init_block', '$')        
                 self.arguments()
                 self.read_token()
                 if(self.token.getContent() == ';'):
