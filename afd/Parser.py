@@ -41,7 +41,7 @@ class Parser:
                 self.read_token()
                 if(self.token.getContent() == ';'):
                     self.dcl_var()
-                    self.dcls_sub()
+                    self.dcls_subs()
                     self.command_com()
                     self.read_token()
                     if(self.token.getContent() == '.'):
@@ -128,20 +128,21 @@ class Parser:
 
 #declarações_de_subprogramas → declaração_de_subprograma; declarações_de_subprogramas'
 #declarações_de_subprogramas' → declaração_de_subprograma; declarações_de_subprogramas' | ε
-    def dcls_sub(self):
+    def dcls_subs(self):
         self.dcl_subprogram()
         self.read_token()
         if self.token.getContent() == ';':
-            self.dcls_sub_l()
+            self.dcls_subs_l()
         else:
+            #raise Exception(f"Erro sintatico: Esperava-se ';', mas foi encontrado '{self.token.getContent()}'. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             self.back()
             return
 
-    def dcls_sub_l(self):
+    def dcls_subs_l(self):
         self.dcl_subprogram()
         self.read_token()
         if self.token.getContent() == ';':
-            self.dcls_sub_l()
+            self.dcls_subs_l()
         else:
             self.back()
             return
@@ -159,7 +160,7 @@ class Parser:
                 self.read_token()
                 if(self.token.getContent() == ';'):
                     self.dcl_var()
-                    self.dcls_sub()
+                    self.dcls_subs()
                     self.command_com()
                 else:
                     raise Exception(f"Erro sintatico: Apos uma declaracao de subprograma, esperava-se ';', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
@@ -232,8 +233,7 @@ class Parser:
         return
 
     def list_command_l(self):
-        self.read_token()
-        
+        self.read_token() 
         if self.token.getContent() == ';':
             self.command()
             self.list_command_l()
@@ -241,16 +241,18 @@ class Parser:
             self.back()
             return
     
-    def command(self):     
-        self.read_token()     
-        if self.token.getType() == TokenType.IDENTIFIER:
-            self.procedure_activation()
+    def command(self):
+        self.read_token()
+        if self.token.getType() == TokenType.IDENTIFIER:                
             self.read_token()
             if self.token.getType() == TokenType.ASSIGN:                
                 self.expression()
                 return
+            elif self.token.getContent() == '(':
+                self.procedure_activation()
+                return
             else:
-                raise Exception(f"Erro sintatico: Esperava-se o sinal de atribuição ':=', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}. Certifique-se de que está usando ':=' para atribuir valores.")
+                self.back()
         elif self.token.getContent() == 'if':
                 self.expression()
                 self.read_token()
@@ -271,8 +273,7 @@ class Parser:
             self.back()
             return
         
-    def part_else(self):
-        
+    def part_else(self): 
         self.read_token()
         if self.token.getContent() == 'else':
             self.command()
@@ -289,26 +290,19 @@ class Parser:
         else:
             raise Exception(f"Erro sintatico: Espera-se uma variavel, mas foi encontrado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
         
-    def procedure_activation(self):        
-        if self.token.getType() == TokenType.IDENTIFIER:
-            self.read_token()
-            if self.token.getContent() == '(':
-                self.list_expression()
-                self.read_token()
-                if self.token.getContent() == ')':
-                    return
-            else:
-                self.back()
-                return
+    def procedure_activation(self):
+        self.list_expression()
+        self.read_token()
+        if self.token.getContent() == ')':
+            return
+
 #lista_de_expressões → expressão lista_de_expressões'
 #lista_de_expressões' → , expressão lista_de_expressões' | ε           
     def list_expression(self):
-        
         self.expression()
         self.list_expression_l()
     
-    def list_expression_l(self):
-        
+    def list_expression_l(self): 
         self.read_token()
         if self.token.getContent() == ',':
             self.expression()
@@ -369,7 +363,7 @@ class Parser:
             return
 
     def factor(self):
-        self.read_token()
+        self.read_token()        
         if self.token.getType() == TokenType.IDENTIFIER:
             self.read_token()
             if self.token.getContent() == '(':

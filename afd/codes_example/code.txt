@@ -1,6 +1,6 @@
 program resultado;
-    var N1,N2,N3, N3 : real;
-        S,M, N3 : real;
+    var N1,N2,N3 : real;
+        S,M : real;
             Result : boolean;
     begin
     {isto eh um comentario}
