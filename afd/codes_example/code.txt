@@ -5,7 +5,7 @@ program resultado;
     begin
     {isto eh um comentario}
         N1:=(4*12) + (10/2);
-        N2:= 5.5;
+        N2:= S;
         N3:=4.5;
         S:=N1+N2+N3;
         M:=S/3;

@@ -2,14 +2,19 @@ from Scanner import Scanner
 from Token import Token
 from TokenType import TokenType
 from Stack import Stack
+from PcT import PcT
 class Parser:
     scanner = Scanner
     buffer = []
+    counter = 0
+    marked = []
+    atual = []
     def __init__(self, scanner):
         self.scanner = scanner
         self.token = Token
         self.next = 0
         self.stack = Stack()
+        self.pct = PcT()
         self.store_tokens()
     
     def store_tokens(self):
@@ -97,7 +102,8 @@ class Parser:
         if(self.token.getType() == TokenType.IDENTIFIER):
             if(self.stack.existId(self.token.getContent())):
                 raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-            self.stack.push(self.token.getType(), self.token.getContent())
+            self.stack.push('var', self.token)
+            self.marked.append(self.token.getContent())
             self.list_id_l()
             return
         else:
@@ -106,11 +112,12 @@ class Parser:
     def list_id_l(self):
         self.read_token()        
         if(self.token.getContent() == ','):
-            self.read_token()
+            self.read_token()            
             if(self.token.getType() == TokenType.IDENTIFIER):
                 if(self.stack.existId(self.token.getContent())):
                     raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-                self.stack.push(self.token.getType(), self.token.getContent())
+                self.stack.push('var', self.token)
+                self.marked.append(self.token.getContent())
                 self.list_id_l()
                 return
             else:
@@ -122,6 +129,10 @@ class Parser:
     def type(self):
         self.read_token()
         if(self.token.getContent() == 'integer' or self.token.getContent() == 'real' or self.token.getContent() == 'boolean'):
+            #print(self.marked)
+            for x in self.marked:
+                self.pct.push(self.token.getContent(), x)
+            self.marked = []
             return
         else:
             raise Exception(f"Erro sintatico: Tipo de dado invalido. Esperava-se 'integer', 'real' ou 'boolean', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
@@ -206,9 +217,11 @@ class Parser:
     def command_com(self):
         self.read_token()
         if self.token.getContent() == 'begin':
+            self.counter += 1
             self.optional_command()
             self.read_token()
             if self.token.getContent() == 'end':
+                self.counter -= 1    
                 return
             else:
                 raise Exception(f"Erro sintatico: Esperava-se 'end' para finalizar um bloco 'begin', mas foi encontrado '{self.token.getContent()}' na linha {self.token.getLine()}, coluna {self.token.getColumn()}.")
@@ -243,7 +256,12 @@ class Parser:
     
     def command(self):
         self.read_token()
-        if self.token.getType() == TokenType.IDENTIFIER:                
+        if self.token.getType() == TokenType.IDENTIFIER:
+            if(self.stack.searchToken(self.token.getContent()) == None):
+                raise Exception(f"Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
+            self.atual = []
+            self.atual.append(self.pct.searchToken(self.token.getContent()))
+            self.atual.append(self.token.getContent())
             self.read_token()
             if self.token.getType() == TokenType.ASSIGN:                
                 self.expression()
@@ -315,7 +333,6 @@ class Parser:
         self.simple_expression()
         self.read_token()
         if self.token.getType() == TokenType.REL_OP:
-            #
             self.simple_expression()
             return
         else:
@@ -364,7 +381,11 @@ class Parser:
 
     def factor(self):
         self.read_token()        
-        if self.token.getType() == TokenType.IDENTIFIER:
+        if self.token.getType() == TokenType.IDENTIFIER: 
+            if(self.stack.searchToken(self.token.getContent()) == None):
+                raise Exception(f"Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")          
+            if(self.pct.searchToken(self.token.getContent()) != self.atual[0]):
+                raise Exception(f"'{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
             self.read_token()
             if self.token.getContent() == '(':
                 self.list_expression()
@@ -372,11 +393,12 @@ class Parser:
                 if self.token.getContent() == ')':
                     return
                 else:
-                    raise SyntaxError("Expected closing parenthesis")
+                    raise Exception(f"Espera-se fechamento de parênteses. Linha {self.token.getLine()}, coluna {self.token.getColumn()}")
             else:
                 self.back()
                 return
         elif self.token.getType() in (TokenType.INTEGER, TokenType.REAL, TokenType.BOOLEAN):
+            self.pct.push(self.token.getType(), self.token.getContent())
             return
         elif self.token.getContent() == '(':
             self.expression()

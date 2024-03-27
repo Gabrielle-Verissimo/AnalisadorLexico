@@ -1,10 +1,11 @@
 from Table import Table
+from Token import Token
 class Stack:
     def __init__(self):
         self.table = []  # Inicializa como uma lista vazia
 
-    def push(self, type, token):
-        inputTable = Table(type, token)
+    def push(self, flag, token):
+        inputTable = Table(flag, token)
         self.table.append(inputTable)  # Adiciona uma instância de Table à lista
 
     def pop(self):
@@ -13,18 +14,17 @@ class Stack:
 
     def top(self):
         if self.table:  # Verifica se a lista não está vazia
-            type = self.table[-1].getType()
+            flag = self.table[-1].getflag()
             token = self.table[-1].getToken()
-            return type, token # Retorna a última instância de Table da lista
+            return flag, token # Retorna a última instância de Table da lista
 
     def isEmpty(self):
         return not bool(self.table)  # Retorna True se a lista estiver vazia, False caso contrário
     
     def searchToken(self, token):
         for table in reversed(self.table):  # Começa do topo da pilha
-            #print(table.getToken())
-            if table.getToken() == token:
-                return table.getType()
+            if isinstance(table.getToken(), Token) and table.getToken().getContent() == token:
+                return table
         return None
     
     def existId(self, id):
@@ -36,8 +36,8 @@ class Stack:
         return False
     
     def allElements(self):
-        for i in self.table: 
-            print(i.getType(), ',', i.getToken())
+        #for i in self.table: 
+            #print(i.getFlag(), ',', i.getToken())
         return self.table  # Retorna a lista de todas as instâncias de Table
 
 

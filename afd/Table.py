@@ -1,13 +1,15 @@
+from Token import Token
+
 class Table:
-    def __init__(self, type, token):
-        self.type = type
+    def __init__(self, flag, token):
+        self.flag = flag
         self.token = token
     
-    def getType(self):
-        return self.type
+    def getFlag(self):
+        return self.flag
     
-    def setType(self, type):
-        self.type = type
+    def setFlag(self, flag):
+        self.flag = flag
         
     def getToken(self):
         return self.token
