@@ -10,13 +10,14 @@ class Stack:
 
     def pop(self):
         if self.table:  # Verifica se a lista não está vazia
-            return self.table.pop()  # Remove e retorna a última instância de Table da lista
+           return self.table.pop()  # Remove e retorna a última instância de Table da lista
 
     def top(self):
         if self.table:  # Verifica se a lista não está vazia
-            flag = self.table[-1].getflag()
+            flag = self.table[-1].getFlag()
             token = self.table[-1].getToken()
-            return flag, token # Retorna a última instância de Table da lista
+            if isinstance(token, Token): token = token.getContent()
+            return token # Retorna a última instância de Table da lista
 
     def isEmpty(self):
         return not bool(self.table)  # Retorna True se a lista estiver vazia, False caso contrário
@@ -24,7 +25,7 @@ class Stack:
     def searchToken(self, token):
         for table in reversed(self.table):  # Começa do topo da pilha
             if isinstance(table.getToken(), Token) and table.getToken().getContent() == token:
-                return table
+                return table.getFlag()
         return None
     
     def existId(self, id):
@@ -36,8 +37,8 @@ class Stack:
         return False
     
     def allElements(self):
-        #for i in self.table: 
-            #print(i.getFlag(), ',', i.getToken())
+        for i in self.table: 
+            print(i.getFlag(), ',', i.getToken())
         return self.table  # Retorna a lista de todas as instâncias de Table
 
 

@@ -12,10 +12,18 @@ class PcT:
         self.pct.append(inputTable)
         
     def searchToken(self, token):
-        for x in self.pct:  # Começa do topo da pilha
+        for x in reversed(self.pct):  # Começa do topo da pilha
+            #if x.getToken() == '$': break
             if x.getToken() == token:
                 return x.getFlag()
         return None
+    
+    def top(self):
+        if self.pct:  # Verifica se a lista não está vazia
+            #flag = self.pct[-1].getFlag()
+            token = self.pct[-1].getToken()
+            #if isinstance(token, Token): token = token.getContent()
+            return token
         
     def allElements(self):
         for i in self.pct: 

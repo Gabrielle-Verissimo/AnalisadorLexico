@@ -1,20 +1,21 @@
 program Test4;
 var
-   A, B, R, I : integer;
+   A, B, R, I : real;
    C : real;
 
-procedure teste2 (C: integer);
+procedure teste1 (C: real);
  var K: real;
  begin
-   K := 3;
+   C := K;
  end;
 
-procedure teste2 (A:integer; B:real);
+procedure teste2 (A:real; B:real);
 var
    S,X: real;
+   Z : real;
 begin
-   X := 1.0;  { Inicializa X }
-   S := A + B * X
+   X := 1.5;  { Inicializa X }
+   S := A + B * Z
 end;
 
 begin
@@ -23,11 +24,11 @@ begin
    I := 0;
    while (I <= 5) do
    begin
-      A := Z;
+      A := 1;
       B := B-1;
       R := A + B;
       I := I + 1
    end;
-   teste1(A);
-   teste2(A, B);
+   C := A;
+  
 end.

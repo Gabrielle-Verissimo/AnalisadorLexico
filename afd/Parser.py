@@ -6,13 +6,14 @@ from PcT import PcT
 class Parser:
     scanner = Scanner
     buffer = []
-    counter = 0
+    
     marked = []
     atual = []
     def __init__(self, scanner):
         self.scanner = scanner
         self.token = Token
         self.next = 0
+        self.counter = 0
         self.stack = Stack()
         self.pct = PcT()
         self.store_tokens()
@@ -42,7 +43,7 @@ class Parser:
             self.stack.push('init_block', '$')
             self.read_token()
             if(self.token.getType() == TokenType.IDENTIFIER):
-                self.stack.push('program_name', self.token.getContent())
+                self.stack.push('program_name', self.token)
                 self.read_token()
                 if(self.token.getContent() == ';'):
                     self.dcl_var()
@@ -101,7 +102,7 @@ class Parser:
         self.read_token()
         if(self.token.getType() == TokenType.IDENTIFIER):
             if(self.stack.existId(self.token.getContent())):
-                raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+                raise Exception(f"Erro semântico: Já existe um identificador com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")            
             self.stack.push('var', self.token)
             self.marked.append(self.token.getContent())
             self.list_id_l()
@@ -129,7 +130,6 @@ class Parser:
     def type(self):
         self.read_token()
         if(self.token.getContent() == 'integer' or self.token.getContent() == 'real' or self.token.getContent() == 'boolean'):
-            #print(self.marked)
             for x in self.marked:
                 self.pct.push(self.token.getContent(), x)
             self.marked = []
@@ -145,7 +145,6 @@ class Parser:
         if self.token.getContent() == ';':
             self.dcls_subs_l()
         else:
-            #raise Exception(f"Erro sintatico: Esperava-se ';', mas foi encontrado '{self.token.getContent()}'. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
             self.back()
             return
 
@@ -165,7 +164,7 @@ class Parser:
             if(self.token.getType() == TokenType.IDENTIFIER):
                 if(self.stack.existId(self.token.getContent())):
                     raise Exception(f"Erro semântico: Já existe uma procedure com o nome {self.token.getContent()}. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
-                self.stack.push('procedure_name', self.token.getContent())
+                self.stack.push('procedure_name', self.token)
                 self.stack.push('init_block', '$')        
                 self.arguments()
                 self.read_token()
@@ -257,11 +256,13 @@ class Parser:
     def command(self):
         self.read_token()
         if self.token.getType() == TokenType.IDENTIFIER:
-            if(self.stack.searchToken(self.token.getContent()) == None):
-                raise Exception(f"Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
-            self.atual = []
-            self.atual.append(self.pct.searchToken(self.token.getContent()))
-            self.atual.append(self.token.getContent())
+            tk = self.stack.searchToken(self.token.getContent())
+            if(tk == None):
+                raise Exception(f"Erro semântico: Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
+            if(tk == 'var'):
+                self.atual = []
+                self.atual.append(self.pct.searchToken(self.token.getContent()))
+                self.atual.append(self.token.getContent())
             self.read_token()
             if self.token.getType() == TokenType.ASSIGN:                
                 self.expression()
@@ -300,8 +301,7 @@ class Parser:
             self.back()
             return
     
-    def variable(self):
-        
+    def variable(self):  
         self.read_token()
         if self.token.getType() == TokenType.IDENTIFIER:
             return
@@ -354,7 +354,6 @@ class Parser:
     
     def simple_expression_l(self): 
         self.read_token()
-        
         if self.token.getType() == TokenType.ADD_OP:
             self.term()
             self.simple_expression_l()
@@ -380,12 +379,12 @@ class Parser:
             return
 
     def factor(self):
-        self.read_token()        
-        if self.token.getType() == TokenType.IDENTIFIER: 
+        self.read_token()
+        if self.token.getType() == TokenType.IDENTIFIER:
             if(self.stack.searchToken(self.token.getContent()) == None):
-                raise Exception(f"Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")          
+                raise Exception(f"Erro semântico: Identificador '{self.token.getContent()}' não encontrado. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")          
             if(self.pct.searchToken(self.token.getContent()) != self.atual[0]):
-                raise Exception(f"'{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
+                raise Exception(f"Erro semântico: '{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
             self.read_token()
             if self.token.getContent() == '(':
                 self.list_expression()
@@ -397,8 +396,21 @@ class Parser:
             else:
                 self.back()
                 return
-        elif self.token.getType() in (TokenType.INTEGER, TokenType.REAL, TokenType.BOOLEAN):
+        elif self.token.getType() == TokenType.INTEGER:
             self.pct.push(self.token.getType(), self.token.getContent())
+            if(self.atual[0] == 'real'): return         
+            if(self.pct.searchToken(self.token.getContent()) != self.atual[0]):
+                raise Exception(f"Erro semântico: '{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
+            return
+        elif self.token.getType() == TokenType.REAL:
+            self.pct.push(self.token.getType(), self.token.getContent())
+            if(self.pct.searchToken(self.token.getContent()) != self.atual[0]):
+                raise Exception(f"Erro semântico: '{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
+            return
+        elif self.token.getType() == TokenType.BOOLEAN:
+            self.pct.push(self.token.getType(), self.token.getContent())
+            if(self.pct.searchToken(self.token.getContent()) != self.atual[0]):
+                raise Exception(f"Erro semântico: '{self.token.getContent()}' não é do mesmo tipo que '{self.atual[1]}'. Linha {self.token.getLine()}, coluna  {self.token.getColumn()}.")
             return
         elif self.token.getContent() == '(':
             self.expression()
@@ -411,4 +423,5 @@ class Parser:
             self.factor()
             return
         else:
-            raise Exception (f"Erro sintatico: Token inesperado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            raise Exception (f"Erro semântico: expressão ilegal. Linha {self.token.getLine()} e coluna {self.token.getColumn()}")
+            #raise Exception (f"Erro sintatico: Token inesperado '{self.token.getType()}' na linha {self.token.getLine()} e coluna {self.token.getColumn()}")

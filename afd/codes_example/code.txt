@@ -1,16 +1,24 @@
 program resultado;
     var N1,N2,N3 : real;
+        C : integer;
         S,M : real;
             Result : boolean;
+    procedure teste (C: real);
+        var K: real;
+    begin
+        K := C;
+    end;
     begin
     {isto eh um comentario}
-        N1:=(4*12) + (10/2);
+        teste(N1);
+        N1 := 8.9;
+        N1:=(4.2*12.0) + (10.0/2.0);
         N2:= S;
         N3:=4.5;
         S:=N1+N2+N3;
-        M:=S/3;
-        if(M>=5)then
+        M:=S/3.5;
+        if(M>=5.0)then
             Result:=True
         else
-            Result:=False;
+            Result:=False;           
     end.
